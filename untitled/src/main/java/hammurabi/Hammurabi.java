@@ -18,34 +18,45 @@ public class Hammurabi {
         int bushels = 2800;
         int acresOwned = 1000;
         int population = 100;
-        int bushelsFedToPeople;
-        int howManyPeopleStarved;
-        int grainsInStorage;
+        int bushelsFedToPeople = 0;
+        int howManyPeopleStarved = 0;
+        int plaguesDeath = 0;
+        int grainsInStorage = 0;
         int currentYear = 1;
-        int numberDied = 0;
         int immigrants = 5;
         int bushelsHarvested = 3000;
-        int harvestRate = bushelsHarvested/acresOwned;
+        int harvestRate = bushelsHarvested / acresOwned;
+        int numberOfDestroyedGrain = 0;
 
+        while (currentYear <= 10){
         System.out.print("\n " +
                 "O great Hammurabi!\n" +
-                "You are in year "  + currentYear + " of your ten year rule.\n" +
-                "In the previous year " + numberDied+ " people starved to death.\n" +
-                "In the previous year " + immigrants  + " people entered the kingdom.\n" +
+                "You are in year " + currentYear + " of your ten year rule.\n" +
+                "In the previous year " + howManyPeopleStarved + " people starved to death.\n" +
+                "In the previous year " + immigrants + " people entered the kingdom.\n" +
                 "The population is now " + population + ".\n" +
-                "We harvested "+ bushelsHarvested + " bushels at " +harvestRate +" bushels per acre.\n" +
-                "Rats destroyed 200 bushels, leaving 2800 bushels in storage.\n" +
-                "The city owns 1000 acres of land.\n" +
-                "Land is currently worth 19 bushels per acre.");
+                "We harvested " + bushelsHarvested + " bushels at " + harvestRate + " bushels per acre.\n" +
+                "Rats destroyed " + numberOfDestroyedGrain + " bushels, leaving " + grainsInStorage + " bushels in storage.\n" +
+                "The city owns " + acresOwned + " acres of land.\n" +
+                "Land is currently worth " + pricePerBushel + " bushels per acre.");
 
         int acresToBuy = askHowManyAcresToBuy(pricePerBushel, bushels);
         acresOwned += acresToBuy;
-        if (acresToBuy == 0){
+        if (acresToBuy == 0) {
             acresOwned = acresToBuy - askHowManyAcresToSell(acresOwned);
         } else {
             bushelsFedToPeople = askHowMuchGrainToFeedPeople(bushels);
         }
-        askHowManyAcresToPlant(acresOwned,population,bushels);
+        askHowManyAcresToPlant(acresOwned, population, bushels);
+
+        population = population - plagueDeaths(population);
+        howManyPeopleStarved = starvationDeaths(population, bushelsFedToPeople);
+        uprising(population, howManyPeopleStarved);
+        immigrants = immigrants(population, acresOwned, grainsInStorage);
+        bushelsHarvested = harvest(acresOwned);
+
+        currentYear++;
+    }
     }
 
     public int getUserInput(String string){
@@ -54,36 +65,39 @@ public class Hammurabi {
     }
 
     public int askHowManyAcresToBuy(int price, int bushels){
-        int numberOfAcresToBuy = getUserInput("How many acres do you want to buy?");
+        int numberOfAcresToBuy = getUserInput("\n How many acres do you want to buy?");;
         if ((numberOfAcresToBuy * price)  <  bushels ){
             return numberOfAcresToBuy;
         } else {
-            //getUserInput("How many acres do you want to buy?");
-            throw new IllegalArgumentException("You cant afford that many acres");
+            System.out.println("You cant afford that many acres");
+            return askHowManyAcresToBuy(price, bushels);
         }
 
     }
 
     public  int askHowManyAcresToSell(int acresOwned){
-        int acresToSell = getUserInput("How many acres do you want to sell?");
-        if (acresToSell > acresOwned){
-            throw new IllegalArgumentException("Cant sell more than you have");
-        } else {
+        int numberToCheck = getUserInput("\n How many acres do you want to sell?");
+        int acresToSell = (numberToCheck < acresOwned)? numberToCheck : getUserInput("\n How many acres do you want to sell? you only have " + acresOwned + " to sell.");
+//        if (acresToSell > acresOwned){
+//            throw new IllegalArgumentException("Cant sell more than you have");
+//        } else {
             return acresToSell;
-        }
+//        }
 
     }
 
     public int askHowMuchGrainToFeedPeople(int bushels){
-        int grainToFeedPeople = getUserInput("How much grain do you want to feed the people");
-        if (grainToFeedPeople < bushels){
+        int numberToCheck = getUserInput("\n How much grain do you want to feed the people?");
+        int grainToFeedPeople = numberToCheck < bushels? numberToCheck : getUserInput("How much grain do you want to feed the people. you only have " + bushels + " to feed.");
+       // if (grainToFeedPeople < bushels){
             return grainToFeedPeople;
-        } else {
-            throw new IllegalArgumentException("You can only fee from what you have");
-        }
+//        } else {
+//            throw new IllegalArgumentException("You can only fee from what you have");
+//        }
     }
 
     public  int askHowManyAcresToPlant(int acresOwned, int population, int bushels){
+        int numberToCheck = getUserInput("\n How much grain do you want to feed the people?");
         int numberOfAcresToPlant = getUserInput("How many acres do you want to plant?");
         if (numberOfAcresToPlant < acresOwned && numberOfAcresToPlant/10 < population && numberOfAcresToPlant/2 < bushels){
             return numberOfAcresToPlant;
@@ -95,8 +109,12 @@ public class Hammurabi {
 
 
     public int plagueDeaths(int population) {
-
-        return (rand.nextInt(0,15)/100) * population;
+        int r = rand.nextInt(1,100);
+        int plagueDeaths = 0;
+        if (r <= 15){
+            plagueDeaths =  population/2;
+        }
+        return plagueDeaths;
     }
 
     public int starvationDeaths(int population, int bushelsFedToPeople) {
@@ -116,7 +134,7 @@ public class Hammurabi {
 //        if (acres < ) {
 //
 //        }
-        System.out.println(acres * rand.nextInt(1,6));
+       // System.out.println(acres * rand.nextInt(1,6));
         return acres * rand.nextInt(1,7);
     }
 
@@ -127,4 +145,6 @@ public class Hammurabi {
     public int newCostOfLand() {
         return 0;
     }
+
+
 }
