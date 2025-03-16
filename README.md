@@ -1,4 +1,4 @@
-# hamurabi
+# hammurabi
 an ancient (in more ways than one) computer game (text)
 
 ## General idea of the lab
