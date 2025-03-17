@@ -30,6 +30,7 @@ public class Hammurabi {
 
         while (currentYear <= 10){
             System.out.print("\n " +
+                    "------------------------------------------------------------------\n " +
                     "O great Hammurabi!\n" +
                     "You are in year " + currentYear + " of your ten year rule.\n" +
                     "In the previous year " + howManyPeopleStarved + " people starved to death.\n" +
@@ -38,25 +39,34 @@ public class Hammurabi {
                     "We harvested " + bushelsHarvested + " bushels at " + harvestRate + " bushels per acre.\n" +
                     "Rats destroyed " + numberOfDestroyedGrain + " bushels, leaving " + grainsInStorage + " bushels in storage.\n" +
                     "The city owns " + acresOwned + " acres of land.\n" +
-                    "Land is currently worth " + pricePerBushel + " bushels per acre.");
+                    "Land is currently worth " + pricePerBushel + " bushels per acre. \n" +
+                    "----------------------------------------------------------------------");
 
             int acresToBuy = askHowManyAcresToBuy(pricePerBushel, bushels);
             acresOwned += acresToBuy;
             if (acresToBuy == 0) {
-                acresOwned = acresToBuy - askHowManyAcresToSell(acresOwned);
-            } else {
-                bushelsFedToPeople = askHowMuchGrainToFeedPeople(bushels);
+                acresOwned = acresOwned - askHowManyAcresToSell(acresOwned);
             }
-            askHowManyAcresToPlant(acresOwned, population, bushels);
-
+            bushelsFedToPeople = askHowMuchGrainToFeedPeople(bushels);
+            grainsInStorage += askHowManyAcresToPlant(acresOwned, population, bushels);
+            bushels -= grainsInStorage;
             population = population - plagueDeaths(population);
             howManyPeopleStarved = starvationDeaths(population, bushelsFedToPeople);
-            uprising(population, howManyPeopleStarved);
-            immigrants = immigrants(population, acresOwned, grainsInStorage);
+            population -= howManyPeopleStarved;
+            if (uprising(population, howManyPeopleStarved)){
+                currentYear = 11;
+                System.out.println("Game Over: There was an uprising, You have been thrown out of power!");
+            };
+            if (howManyPeopleStarved == 0){
+                immigrants = immigrants(population, acresOwned, grainsInStorage);
+                population += immigrants;
+            }
             bushelsHarvested = harvest(acresOwned);
+            bushels += bushelsHarvested;
 
             currentYear++;
         }
+        System.exit(0);
     }
 
     public int getUserInput(String string){
@@ -90,17 +100,17 @@ public class Hammurabi {
             return grainToFeedPeople;
         } else {
             System.out.println("You can only feed from what you have");
-            askHowMuchGrainToFeedPeople(bushels);
+            return askHowMuchGrainToFeedPeople(bushels);
         }
     }
 
     public  int askHowManyAcresToPlant(int acresOwned, int population, int bushels){
-        int numberToCheck = getUserInput("\n How much grain do you want to feed the people?");
         int numberOfAcresToPlant = getUserInput("How many acres do you want to plant?");
         if (numberOfAcresToPlant < acresOwned && numberOfAcresToPlant/10 < population && numberOfAcresToPlant/2 < bushels){
             return numberOfAcresToPlant;
         } else {
-            throw new IllegalArgumentException("You can plant that much");
+            System.out.println("You can plant that much");
+            return askHowManyAcresToPlant(acresOwned, population, bushels);
         }
 
     }
@@ -136,8 +146,8 @@ public class Hammurabi {
         return acres * rand.nextInt(1,7);
     }
 
-    public int grainEatenByRats(int i) {
-            return 0;
+    public int grainEatenByRats(int bushels) {
+        return 0;
     }
 
     public int newCostOfLand() {
