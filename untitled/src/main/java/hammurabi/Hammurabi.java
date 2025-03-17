@@ -29,39 +29,39 @@ public class Hammurabi {
         int numberOfDestroyedGrain = 0;
 
         while (currentYear <= 10){
-        System.out.print("\n " +
-                "O great Hammurabi!\n" +
-                "You are in year " + currentYear + " of your ten year rule.\n" +
-                "In the previous year " + howManyPeopleStarved + " people starved to death.\n" +
-                "In the previous year " + immigrants + " people entered the kingdom.\n" +
-                "The population is now " + population + ".\n" +
-                "We harvested " + bushelsHarvested + " bushels at " + harvestRate + " bushels per acre.\n" +
-                "Rats destroyed " + numberOfDestroyedGrain + " bushels, leaving " + grainsInStorage + " bushels in storage.\n" +
-                "The city owns " + acresOwned + " acres of land.\n" +
-                "Land is currently worth " + pricePerBushel + " bushels per acre.");
+            System.out.print("\n " +
+                    "O great Hammurabi!\n" +
+                    "You are in year " + currentYear + " of your ten year rule.\n" +
+                    "In the previous year " + howManyPeopleStarved + " people starved to death.\n" +
+                    "In the previous year " + immigrants + " people entered the kingdom.\n" +
+                    "The population is now " + population + ".\n" +
+                    "We harvested " + bushelsHarvested + " bushels at " + harvestRate + " bushels per acre.\n" +
+                    "Rats destroyed " + numberOfDestroyedGrain + " bushels, leaving " + grainsInStorage + " bushels in storage.\n" +
+                    "The city owns " + acresOwned + " acres of land.\n" +
+                    "Land is currently worth " + pricePerBushel + " bushels per acre.");
 
-        int acresToBuy = askHowManyAcresToBuy(pricePerBushel, bushels);
-        acresOwned += acresToBuy;
-        if (acresToBuy == 0) {
-            acresOwned = acresToBuy - askHowManyAcresToSell(acresOwned);
-        } else {
-            bushelsFedToPeople = askHowMuchGrainToFeedPeople(bushels);
+            int acresToBuy = askHowManyAcresToBuy(pricePerBushel, bushels);
+            acresOwned += acresToBuy;
+            if (acresToBuy == 0) {
+                acresOwned = acresToBuy - askHowManyAcresToSell(acresOwned);
+            } else {
+                bushelsFedToPeople = askHowMuchGrainToFeedPeople(bushels);
+            }
+            askHowManyAcresToPlant(acresOwned, population, bushels);
+
+            population = population - plagueDeaths(population);
+            howManyPeopleStarved = starvationDeaths(population, bushelsFedToPeople);
+            uprising(population, howManyPeopleStarved);
+            immigrants = immigrants(population, acresOwned, grainsInStorage);
+            bushelsHarvested = harvest(acresOwned);
+
+            currentYear++;
         }
-        askHowManyAcresToPlant(acresOwned, population, bushels);
-
-        population = population - plagueDeaths(population);
-        howManyPeopleStarved = starvationDeaths(population, bushelsFedToPeople);
-        uprising(population, howManyPeopleStarved);
-        immigrants = immigrants(population, acresOwned, grainsInStorage);
-        bushelsHarvested = harvest(acresOwned);
-
-        currentYear++;
-    }
     }
 
     public int getUserInput(String string){
         System.out.println(string);
-       return scanner.nextInt();
+        return scanner.nextInt();
     }
 
     public int askHowManyAcresToBuy(int price, int bushels){
@@ -72,28 +72,26 @@ public class Hammurabi {
             System.out.println("You cant afford that many acres");
             return askHowManyAcresToBuy(price, bushels);
         }
-
     }
 
     public  int askHowManyAcresToSell(int acresOwned){
-        int numberToCheck = getUserInput("\n How many acres do you want to sell?");
-        int acresToSell = (numberToCheck < acresOwned)? numberToCheck : getUserInput("\n How many acres do you want to sell? you only have " + acresOwned + " to sell.");
-//        if (acresToSell > acresOwned){
-//            throw new IllegalArgumentException("Cant sell more than you have");
-//        } else {
+        int acresToSell = getUserInput("\n How many acres do you want to sell?");
+        if (acresToSell < acresOwned){
             return acresToSell;
-//        }
-
+        } else {
+            System.out.println("You do not own that many acres. You only have "+ acresOwned + " to sell");
+            return askHowManyAcresToSell(acresOwned);
+        }
     }
 
-    public int askHowMuchGrainToFeedPeople(int bushels){
-        int numberToCheck = getUserInput("\n How much grain do you want to feed the people?");
-        int grainToFeedPeople = numberToCheck < bushels? numberToCheck : getUserInput("How much grain do you want to feed the people. you only have " + bushels + " to feed.");
-       // if (grainToFeedPeople < bushels){
+    public int askHowMuchGrainToFeedPeople(int bushels) {
+        int grainToFeedPeople = getUserInput("\n How much grain do you want to feed the people?");
+        if (grainToFeedPeople < bushels) {
             return grainToFeedPeople;
-//        } else {
-//            throw new IllegalArgumentException("You can only fee from what you have");
-//        }
+        } else {
+            System.out.println("You can only feed from what you have");
+            askHowMuchGrainToFeedPeople(bushels);
+        }
     }
 
     public  int askHowManyAcresToPlant(int acresOwned, int population, int bushels){
