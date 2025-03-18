@@ -25,7 +25,7 @@ public class Hammurabi {
         int currentYear = 1;
         int immigrants = 5;
         int bushelsHarvested = 3000;
-        int harvestRate = bushelsHarvested / acresOwned;
+        int harvestRate = 3;
         int numberOfDestroyedGrain = 0;
 
         while (currentYear <= 10){
@@ -48,6 +48,7 @@ public class Hammurabi {
                 acresOwned = acresOwned - askHowManyAcresToSell(acresOwned);
             }
             bushelsFedToPeople = askHowMuchGrainToFeedPeople(bushels);
+            bushels -= bushelsFedToPeople;
             grainsInStorage += askHowManyAcresToPlant(acresOwned, population, bushels);
             bushels -= grainsInStorage;
             population = population - plagueDeaths(population);
@@ -63,6 +64,9 @@ public class Hammurabi {
             }
             bushelsHarvested = harvest(acresOwned);
             bushels += bushelsHarvested;
+            harvestRate = bushelsHarvested/acresOwned;
+            bushels = bushels - grainEatenByRats(bushels);
+            pricePerBushel = newCostOfLand();
 
             currentYear++;
         }
@@ -147,11 +151,18 @@ public class Hammurabi {
     }
 
     public int grainEatenByRats(int bushels) {
-        return 0;
+        int r = rand.nextInt(1,100);
+        int r2 = rand.nextInt(10,30);
+        int grainEatenByRats = 0;
+        if (r <= 40){
+            grainEatenByRats = bushels * (r2/100);
+        }
+        return grainEatenByRats;
+
     }
 
     public int newCostOfLand() {
-        return 0;
+        return rand.nextInt(17,24);
     }
 
 
