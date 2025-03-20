@@ -2,17 +2,13 @@ package hammurabi;
  import java.util.Random;
  import java.util.Scanner;
 
-
 public class Hammurabi {
     Random rand = new Random();
     Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-
         new Hammurabi().playGame();
     }
-
-
     void playGame() {
         int pricePerBushel = 19;
         int bushels = 2800;
@@ -67,17 +63,14 @@ public class Hammurabi {
             harvestRate = bushelsHarvested/acresOwned;
             bushels = bushels - grainEatenByRats(bushels);
             pricePerBushel = newCostOfLand();
-
             currentYear++;
         }
         System.exit(0);
     }
-
     public int getUserInput(String string){
         System.out.println(string);
         return scanner.nextInt();
     }
-
     public int askHowManyAcresToBuy(int price, int bushels){
         int numberOfAcresToBuy = getUserInput("\n How many acres do you want to buy?");;
         if ((numberOfAcresToBuy * price)  <  bushels ){
@@ -87,27 +80,24 @@ public class Hammurabi {
             return askHowManyAcresToBuy(price, bushels);
         }
     }
-
     public  int askHowManyAcresToSell(int acresOwned){
         int acresToSell = getUserInput("\n How many acres do you want to sell?");
-        if (acresToSell < acresOwned){
+        if (acresToSell < acresOwned && acresToSell > 0){
             return acresToSell;
         } else {
             System.out.println("You do not own that many acres. You only have "+ acresOwned + " to sell");
             return askHowManyAcresToSell(acresOwned);
         }
     }
-
     public int askHowMuchGrainToFeedPeople(int bushels) {
         int grainToFeedPeople = getUserInput("\n How much grain do you want to feed the people?");
-        if (grainToFeedPeople < bushels) {
+        if (grainToFeedPeople < bushels && grainToFeedPeople > 0) {
             return grainToFeedPeople;
         } else {
             System.out.println("You can only feed from what you have");
             return askHowMuchGrainToFeedPeople(bushels);
         }
     }
-
     public  int askHowManyAcresToPlant(int acresOwned, int population, int bushels){
         int numberOfAcresToPlant = getUserInput("How many acres do you want to plant?");
         if (numberOfAcresToPlant < acresOwned && numberOfAcresToPlant/10 < population && numberOfAcresToPlant/2 < bushels){
@@ -116,10 +106,7 @@ public class Hammurabi {
             System.out.println("You can plant that much");
             return askHowManyAcresToPlant(acresOwned, population, bushels);
         }
-
     }
-
-
     public int plagueDeaths(int population) {
         int r = rand.nextInt(1,100);
         int plagueDeaths = 0;
@@ -128,28 +115,18 @@ public class Hammurabi {
         }
         return plagueDeaths;
     }
-
     public int starvationDeaths(int population, int bushelsFedToPeople) {
         return population%(bushelsFedToPeople/20);
     }
-
     public boolean uprising(int population, int howManyPeopleStarved) {
         return ((.45)*population)<howManyPeopleStarved;
     }
-
     public int immigrants(int population, int acresOwned, int grainInStorage) {
        return (20 * acresOwned + grainInStorage)/(100*population) + 1;
-//        return 0;
     }
-
     public int harvest(int acres) {
-//        if (acres < ) {
-//
-//        }
-       // System.out.println(acres * rand.nextInt(1,6));
         return acres * rand.nextInt(1,7);
     }
-
     public int grainEatenByRats(int bushels) {
         int r = rand.nextInt(1,100);
         int r2 = rand.nextInt(10,30);
@@ -158,12 +135,8 @@ public class Hammurabi {
             grainEatenByRats = bushels * (r2/100);
         }
         return grainEatenByRats;
-
     }
-
     public int newCostOfLand() {
         return rand.nextInt(17,24);
     }
-
-
 }
